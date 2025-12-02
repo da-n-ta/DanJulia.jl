@@ -1,5 +1,4 @@
 module DanJulia
-
 using Convex,SCS
 
 # Generate random problem data
@@ -51,5 +50,18 @@ for S in 1.0:1.0:10.0
     println("theta_vraie = ", theta_true)
     
 end
+# calculer lerreur valeur absolue entre theta_estime et theta_vraie
+# et trace cette erreur en fct de S 
+using Plots
+errors = []
+S_values = 1.0:1.0:10.0
+for S in S_values
+
+    theta_estime = p2(X, y, S)
+    error = norm(theta_estime - theta_true, 1)
+    push!(errors, error)
+end 
+# tracer cette erreur en fct de S
+plot(S_values, errors, xlabel="S", ylabel="Erreur (norme 1)", title="Erreur entre theta_estime et theta_vraie en fonction de S", legend=false)
 
 end
