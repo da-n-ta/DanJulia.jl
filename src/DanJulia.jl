@@ -55,7 +55,7 @@ end
 
 
 # tracer cette erreur en fct de S
-plot(S_values, errors, xlabel="S", ylabel="Erreur (norme 1)", title="Erreur entre theta_estime et theta_vraie en fonction de S", legend=false)
+
 
 # Trouver le S optimal qui minimise l'erreur
 function S_optimal(X,y,theta_true)
