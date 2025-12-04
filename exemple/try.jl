@@ -21,8 +21,8 @@ println("theta_vraie = ", theta_true)
 errors = []
 S_values = 1.0:1.0:10.0
 for S in S_values
-    theta_estime = DanJulia.p2(DanJulia.X, DanJulia.y, S)
-    error = norm(theta_estime - DanJulia.theta_true, 1)
+    theta_estime = DanJulia.p2(X, y, S)
+    error = norm(theta_estime - theta_true, 1)
     push!(errors, error)
 end 
 
