@@ -59,6 +59,15 @@ function S_optimal(X, y, theta_true)
     return S_opt, min_error, fig
 end
 
+# ajouter une fonction qyu va venir retourner une list des erreurs theta_estime - theta_vraie en fct de S
+function compute_errors(X, y, theta_true, S_values)
+    errors = []
+    for S in S_values
+        theta_estime = p2(X, y, S)
+        error = norm(theta_estime - theta_true, 1)
+        push!(errors, error)
+    end
+    return errors
 
 function solve_p2_duale(X, y, S)
     n = size(X, 2)
