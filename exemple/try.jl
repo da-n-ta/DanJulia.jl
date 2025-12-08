@@ -1,6 +1,7 @@
 using GLMakie
 using Random,LinearAlgebra
 using DanJulia
+using Convex, SCS
 
 Random.seed!(2)
 n = 10
@@ -32,4 +33,14 @@ lines!(ax, S_values, errors)
 display(fig)
 
 #trouver le S optimal
-DanJulia.S_optimal(X,y,theta_true)
+S_opt, min_error, fig  = DanJulia.S_optimal(X,y,theta_true)
+print("S optimal et erreur minimale obtenue = ", S_opt, ", ", min_error)
+display(fig)
+save("S_optimal_plot.png", fig)
+
+dual_values_inf, dual_values_sum = DanJulia.solve_p2_duale(X,y,1.0)
+println("Valeurs duales pour S=1 : inf = ", dual_values_inf, ", sup = ", dual_values_sum)
+
+fig = DanJulia.dual_values_vs_S(X,y,1.0:0.5:10.0)
+display(fig)
+save("dual_values_plot.png", fig)
