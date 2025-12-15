@@ -1,5 +1,6 @@
 using GLMakie
 using Random,LinearAlgebra
+using CairoMakie
 using DanJulia
 using Convex, SCS
 
@@ -19,19 +20,10 @@ println("theta_vraie = ", theta_true)
 DanJulia.p2(X, y, 3.0)
 println("theta_vraie = ", theta_true)
 
-errors = []
-S_values = 1.0:1.0:10.0
-for S in S_values
-    theta_estime = DanJulia.p2(X, y, S)
-    error = norm(theta_estime - theta_true, 1)
-    push!(errors, error)
-end 
-
-fig_errors = Figure()
-ax = Axis(fig_errors[1, 1], xlabel="S", ylabel="Erreur (norme 1)", title="Erreur entre theta_estime et theta_vraie en fonction de S")
-lines!(ax, S_values, errors)
+# affiche l'erreur pour différentes valeurs de S et le plot
+errors, fig_errors = DanJulia.p2_withS(X, y, 1.0:1.0:7.0, theta_true)
 display(fig_errors)
-save("errors_vs_S.png", fig_errors)
+
 
 #trouver le S optimal
 S_opt, min_error, fig_S_opt = DanJulia.S_optimal(X, y, theta_true)
@@ -43,7 +35,7 @@ save("S_optimal_plot.png", fig_S_opt)
 dual_values_inf, dual_values_sum = DanJulia.solve_p2_duale(X,y,1.0)
 println("Valeurs duales pour S=1 : inf = ", dual_values_inf, ", sup = ", dual_values_sum)
 
-fig_dual = DanJulia.dual_values_vs_S(X, y, 1.0:0.5:10.0)
+fig_dual = DanJulia.dual_values_vs_S(X, y, 1.0:0.5:7.0)
 display(fig_dual)
 save("dual_values_plot.png", fig_dual)
 
@@ -55,12 +47,12 @@ display(fig_theta)
 save("theta_comparison.png", fig_theta)
 
 # résidu en fonction de S
-fig_resid, res = DanJulia.residual_vs_S(X, y, S_values)
+fig_resid, res = DanJulia.residual_vs_S(X, y, 1.0:0.5:10.0)
 display(fig_resid)
 save("residual_vs_S.png", fig_resid)
 
 # chemin de regulas θᵢ(S)
-fig_path, path = DanJulia.theta_path(X, y, S_values)
+fig_path, path = DanJulia.theta_path(X, y, 1.0:0.5:10.0)
 display(fig_path)
 save("theta_path.png", fig_path)
 
