@@ -72,6 +72,8 @@ function S_optimal(X, y, theta_true)
     vlines!(ax, [S_opt], color=:red, linestyle=:dash, label="S optimal = $(round(S_opt,digits=2))")
     axislegend(ax)
 
+    display(fig)
+
 
     return S_opt, min_error, fig
 end
@@ -141,6 +143,8 @@ function plot_theta_comparison(theta_est, theta_true)
     lines!(ax, theta_est, label="θ_est")
     axislegend(ax)
 
+    display(fig)
+
     return fig
 end
 
@@ -159,6 +163,8 @@ function residual_vs_S(X, y, S_vals)
     
     lines!(ax, S_vals, res, label="‖Xθ − y‖₂") 
     axislegend(ax)
+
+    display(fig)
 
     return fig, res
 end
@@ -181,6 +187,8 @@ function theta_path(X, y, S_vals)
     end
 
     axislegend(ax)
+
+    display(fig)
     return fig, path
 end
 
