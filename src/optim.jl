@@ -16,8 +16,6 @@ function p1(X, y)
 end
 
 
-
-# Define another optimization variable but thiss time with constraints
 # la contraintes est que theta>=0 et sum(theta)<=S
 function p2(X, y, S)
     n = size(X, 2)
@@ -30,16 +28,30 @@ function p2(X, y, S)
 
 end
 
+# affiche le graphique et l'erreur pour différentes valeurs de S
+function p2_withS(X, y, S_values, theta_true)
 
-   
+    n = length(theta_true)
+    indices = 1:n
 
-# faire varier S
+    errors_dict = Dict{Float64, Vector{Float64}}()
 
-# calculer lerreur valeur absolue entre theta_estime et theta_vraie
-# et trace cette erreur en fct de S 
+    fig_errors = Figure()
+    ax = Axis(fig_errors[1, 1],xlabel = "Index de θ", ylabel = "Erreur |θ_true - θ_est|", title = "Erreur entre θ_estimé et θ_vrai pour différentes valeurs de S")
 
+    for S in S_values
+        theta_estime = DanJulia.p2(X, y, S)
+        errors = abs.(theta_estime .- theta_true)
 
-# tracer cette erreur en fct de S
+        errors_dict[float(S)] = errors
+        lines!(ax, indices, errors, label = "S = $S")
+    end
+
+    axislegend(ax)
+    display(fig_errors)
+
+    return fig_errors, errors_dict
+end
 
 
 # Trouver le S optimal qui minimise l'erreur
@@ -73,8 +85,6 @@ function solve_p2_duale(X, y, S)
     problem = minimize(L, [theta >= 0, sum(theta) <= S])
     solve!(problem, SCS.Optimizer; silent=true)
 
-
-
     # valeurs duales
     dual_value_inf = problem.constraints[1].dual
     dual_value_sum = problem.constraints[2].dual
@@ -91,26 +101,36 @@ end
 # analyser les résultats obtenus.
 
 function dual_values_vs_S(X, y, S_range)
-   dual_values_inf = zeros(length(S_range))
+    # On suppose que solve_p2_duale(X, y, S) renvoie
+    # dual_inf_vec (vector) et dual_sum (scalar)
+    n = length(solve_p2_duale(X, y, S_range[1])[1])  # nombre de composantes
+    dual_values_matrix = zeros(n, length(S_range))    # chaque ligne = une composante
+
     dual_values_sum = zeros(length(S_range))
 
-for (i, S) in enumerate(S_range)
-    dual_inf_vec, dual_sum = solve_p2_duale(X, y, S)
-    dual_values_inf[i] = sum(dual_inf_vec)
-    dual_values_sum[i] = dual_sum
-end
+    for (i, S) in enumerate(S_range)
+        dual_inf_vec, dual_sum = solve_p2_duale(X, y, S)
+        dual_values_matrix[:, i] .= dual_inf_vec       # chaque ligne = composante
+        dual_values_sum[i] = dual_sum
+    end
 
-
-    # tracer les valeurs duales en fonction de S
-    fig = Figure(resolution=(800,500))
+    # tracer les valeurs duales par composante
+    fig = Figure(resolution=(800, 500))
     ax = Axis(fig[1,1], xlabel="S", ylabel="Valeurs duales", title="Valeurs duales en fonction de S")
-    lines!(ax, S_range, dual_values_inf, label="Valeur duale inférieure")
-    lines!(ax, S_range, dual_values_sum, label="Valeur duale somme")
+
+    for j in 1:n
+        lines!(ax, S_range, dual_values_matrix[j, :], label="Position duale $j")
+    end
+
+    # si tu veux aussi tracer la somme
+    lines!(ax, S_range, dual_values_sum, color=:black, linestyle=:dash, label="Somme des duales")
+
     axislegend(ax)
+    display(fig)
 
-
-    return fig
+    return fig, dual_values_matrix, dual_values_sum
 end
+
 
 function plot_theta_comparison(theta_est, theta_true)
     fig = Figure(resolution=(800,400))
