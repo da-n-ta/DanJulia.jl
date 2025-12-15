@@ -1,6 +1,6 @@
 using GLMakie
 using Random,LinearAlgebra
-using CairoMakie
+#using CairoMakie
 using Convex, SCS
 using DanJulia
 
@@ -42,7 +42,7 @@ fig_theta = DanJulia.plot_theta_comparison(theta_est_opt, theta_true)
 # résidu en fonction de S
 fig_resid, res = DanJulia.residual_vs_S(X, y, 1.0:0.5:10.0)
 
-# chemin de regulas θᵢ(S)
+# chemin de regulas theta (S)
 fig_path, path = DanJulia.theta_path(X, y, 1.0:0.5:10.0)
 
 # verifier KKT pour S_opt

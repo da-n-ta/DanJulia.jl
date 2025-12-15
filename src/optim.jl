@@ -1,15 +1,15 @@
 using Convex, SCS
 using LinearAlgebra
-using GLMakie
+using GLMakie, CairoMakie
 
 
-# Define the optimization variable
+
 function p1(X, y)
     n = size(X, 2)
     theta = Variable(n)
     L = sumsquares(X * theta - y)
     problem = minimize(L, [theta >= 0])
-    solve!(problem, SCS.Optimizer; silent=true)
+    solve!(problem, SCS.Optimizer; silent_solver=true)
 
     return evaluate(theta)
 
@@ -22,7 +22,7 @@ function p2(X, y, S)
     theta = Variable(n)
     L = sumsquares(X * theta - y)
     problem = minimize(L, [theta >= 0, sum(theta) <= S])
-    solve!(problem, SCS.Optimizer; silent=true)
+    solve!(problem, SCS.Optimizer; silent_solver=true)
 
     return evaluate(theta)
 
@@ -85,7 +85,7 @@ function solve_p2_duale(X, y, S)
     L = sumsquares(X * theta - y)
 
     problem = minimize(L, [theta >= 0, sum(theta) <= S])
-    solve!(problem, SCS.Optimizer; silent=true)
+    solve!(problem, SCS.Optimizer; silent_solver=true)
 
     # valeurs duales
     dual_value_inf = problem.constraints[1].dual
